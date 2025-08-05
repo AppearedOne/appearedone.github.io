@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>richtlinienkompetenz.com</title>
+  <style>
+    :root {
+      --bg: black;
+      --text: white;
+      --button-bg: #222;
+      --button-border: white;
+      --button-hover-bg: white;
+      --button-hover-text: black;
+      --blur-color: rgba(50, 0, 0, 0.15);
+    }
+
+    body.light {
+      --bg: white;
+      --text: black;
+      --button-bg: #eee;
+      --button-border: black;
+      --button-hover-bg: black;
+      --button-hover-text: white;
+      --blur-color: rgba(255, 220, 220, 0.25);
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, #FFFFFF 1px, rgba(0, 0, 0, 0) 1px);
+      color: var(--text);
+      margin: 0;
+      font-family: "Rubik", sans-serif;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+
+    @keyframes rotate {
+      from {
+        rotate: 0deg;
+      }
+
+      50% {
+        scale: 1 1.5;
+      }
+
+      to {
+        rotate: 360deg;
+      }
+    }
+
+    #blob {
+      background: radial-gradient(circle at center, blue, green);
+      height: 35vmax;
+      aspect-ratio: 1;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      border-radius: 80%;
+      animation: rotate 40s infinite linear;
+      opacity: 0.5;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #blur {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+      backdrop-filter: blur(820vmax);
+      background: var(--blur-color);
+      transition: background 0.5s ease;
+      pointer-events: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+    }
+
+    section.hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      margin: 0 0 1rem;
+      text-transform: lowercase;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 3rem;
+      padding: 0 1.5rem;
+      border-radius: 999px;
+      background-color: var(--button-bg);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      border: 1px solid var(--button-border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      transform: translateY(0);
+    }
+
+    .button:hover {
+      background-color: var(--button-hover-bg);
+      color: var(--button-hover-text);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    section.content-block {
+      padding: 5rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .theme-toggle-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: sans-serif;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #999;
+      transition: 0.4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.slider {
+      background-color: #444;
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(24px);
+    }
+
+    .dictionary-section {
+      background: transparent;
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 2rem;
+      font-family: system-ui, sans-serif;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      line-height: 1.7;
+    }
+
+    .dictionary-section h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .dict-row {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 1.2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .dict-label {
+      font-weight: bold;
+      min-width: 120px;
+      color: var(--text);
+    }
+
+    .dict-value {
+      color: var(--text);
+    }
+
+    /* SERVER STATUS */
+    .server-status-section {
+      background: transparent;
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 2rem;
+      font-family: system-ui, sans-serif;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      line-height: 1.7;
+    }
+
+
+    .dict-card {
+      background: rgba(255, 255, 255, 0.00);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .dict-left {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .dict-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .dict-label {
+      font-weight: bold;
+      min-width: 100px;
+    }
+
+    .dict-value {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .dict-icon img {
+      width: 96px;
+      height: 96px;
+      border-radius: 12px;
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="blob"></div>
+  <div id="blur"></div>
+
+  <div class="theme-toggle-container">
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <main>
+    <section class="hero">
+      <h1>richtlinienkompetenz</h1>
+      <p>Kompetenz zur Festlegung der Richtlinien (besonders in der Politik)</p>
+      <div class="button-group">
+        <a href="https://ai.richtlinienkompetenz.com/" target="_blank" class="button">OpenWebUI</a>
+        <a href="https://mcsrvstat.us/server/mc.richtlinienkompetenz.com" target="_blank" class="button">MC Server</a>
+        <!--<button class="button" onclick="copyToClipboard()">Copy Link</button>-->
+      </div>
+    </section>
+
+    <section id="dict" class="dictionary-section">
+      <h2><strong>Richtlinienkompetenz</strong>, die</h2>
+
+      <div class="dict-row">
+        <span class="dict-label">Wortart:</span>
+        <span class="dict-value">Substantiv, feminin</span>
+      </div>
+
+      <div class="dict-row">
+        <span class="dict-label">Häufigkeit:</span>
+        <span class="dict-value">▭ ▬ ▬ ▬ ▬</span>
+      </div>
+
+      <div class="dict-row">
+        <span class="dict-label">Aussprache:</span>
+        <span class="dict-value">
+          <strong>Betonung</strong><br />
+          Richtlinienkompetenz
+        </span>
+      </div>
+
+      <div class="dict-row">
+        <span class="dict-label">Lautschrift:</span>
+        <span class="dict-value">[ˈʁɪçtliːniənkɔmpətɛnts]</span>
+      </div>
+      <a href="https://www.duden.de/rechtschreibung/Richtlinienkompetenz">Quelle</a>
+    </section>
+
+    <section class="server-status-section">
+      <h2><strong> MC Server Status</strong></h2>
+      <div id="server-status-card" class="dict-card">
+        <div class="dict-left">
+          <div class="dict-row"><span class="dict-label">Status:</span><span id="srv-status"
+              class="dict-value">Loading…</span></div>
+          <div class="dict-row"><span class="dict-label">IP:</span><span id="srv-ip" class="dict-value">—</span></div>
+          <div class="dict-row"><span class="dict-label">Version:</span><span id="srv-version"
+              class="dict-value">—</span></div>
+          <div class="dict-row"><span class="dict-label">Players:</span><span id="srv-players"
+              class="dict-value">—</span></div>
+          <div class="dict-row"><span class="dict-label">MOTD:</span><span id="srv-motd" class="dict-value">—</span>
+          </div>
+        </div>
+        <div class="dict-icon">
+          <img id="srv-icon" src="" alt="Server Icon" hidden />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Blob follows cursor
+    const blob = document.getElementById("blob");
+    window.onpointermove = event => {
+      const {clientX, clientY} = event;
+      blob.animate({
+        left: `${clientX}px`,
+        top: `${clientY}px`
+      }, {duration: 3000, fill: "forwards"});
+    };
+
+    // Copy to clipboard
+    function copyToClipboard() {
+      const link = "https://example.com/shared-link";
+      navigator.clipboard.writeText(link).then(() => {
+        alert("Link copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy link.");
+      });
+    }
+
+    const toggle = document.getElementById("themeToggle");
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light") {
+        document.body.classList.add("light");
+        toggle.checked = true;
+      }
+    });
+
+    toggle.addEventListener("change", () => {
+      if (toggle.checked) {
+        document.body.classList.add("light");
+        localStorage.setItem("theme", "light");
+      } else {
+        document.body.classList.remove("light");
+        localStorage.setItem("theme", "dark");
+      }
+    });
+    async function fetchServerStatus(address) {
+      try {
+        const res = await fetch(`https://api.mcsrvstat.us/3/${address}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        console.error("Failed to fetch status:", e);
+        return null;
+      }
+    }
+
+    async function updateStatusCard(domain) {
+      const data = await fetchServerStatus(domain);
+      if (!data) {
+        document.getElementById("srv-status").textContent = "Error";
+        return;
+      }
+
+      document.getElementById("srv-status").textContent = data.online ? "Online" : "Offline";
+      document.getElementById("srv-ip").textContent = domain; // Show domain only
+      document.getElementById("srv-version").textContent = data.version || "—";
+      document.getElementById("srv-players").textContent = data.players
+        ? `${data.players.online} / ${data.players.max}`
+        : "—";
+      document.getElementById("srv-motd").innerHTML = data.motd?.clean?.join("<br>") || "—";
+
+      const icon = document.getElementById("srv-icon");
+      if (data.icon) {
+        icon.src = data.icon;
+        icon.hidden = false;
+      } else {
+        icon.hidden = true;
+      }
+    }
+
+    updateStatusCard("mc.richtlinienkompetenz.com");
+  </script>
+
+</body>
+
+</html>
