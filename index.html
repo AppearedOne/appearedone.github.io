@@ -28,11 +28,18 @@
 
     body {
       background-color: var(--bg);
-      background-image: radial-gradient(circle, #FFFFFF 1px, rgba(0, 0, 0, 0) 1px);
+      background-image: 
+        radial-gradient(circle at center, white 1px, transparent 1px);
+      background-size: 30px 30px;
       color: var(--text);
       margin: 0;
       font-family: "Rubik", sans-serif;
-      transition: background-color 0.5s ease, color 0.5s ease;
+      transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease;
+    }
+
+    body.light {
+      background-image: 
+        radial-gradient(circle at center, black 1px, transparent 1px);
     }
 
 
@@ -91,6 +98,7 @@
       flex-direction: column;
       text-align: center;
       padding: 2rem;
+      padding-top: 6rem; /* Account for fixed nav */
     }
 
     h1 {
@@ -102,6 +110,12 @@
     p {
       font-size: 1.2rem;
       margin-bottom: 2rem;
+    }
+
+    .bg_p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color:#444;
     }
 
     .button-group {
@@ -143,11 +157,70 @@
       line-height: 1.6;
     }
 
-    .theme-toggle-container {
+    /* NAVIGATION */
+    .nav {
       position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 3;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      background: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 2rem;
+      transition: all 0.3s ease;
+    }
+
+    body.light .nav {
+      background: rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--text);
+      text-decoration: none;
+      text-transform: lowercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    body.light .nav-link:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .theme-toggle-container {
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -235,6 +308,68 @@
       color: var(--text);
     }
 
+    /* TESTIMONIALS SECTION */
+    .testimonials-section {
+      background: transparent;
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 2rem;
+      font-family: system-ui, sans-serif;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      line-height: 1.7;
+    }
+
+    .testimonials-section h2 {
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .testimonial {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      border-left: 3px solid var(--text);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 0.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .testimonial.animate {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.8s ease;
+    }
+
+    .testimonial-quote {
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 1rem;
+      border-right: 0.15em solid white;
+      letter-spacing: 0.05em;
+      min-height: 1.3em;
+    }
+
+    .testimonial-quote.typing {
+      border-right: 0.15em solid white;
+    }
+
+    .testimonial-quote.typing-complete {
+      border-right: none;
+    }
+
+    .testimonial-author {
+      font-weight: bold;
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    @keyframes typing-quote {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
     /* SERVER STATUS */
     .server-status-section {
       background: transparent;
@@ -246,7 +381,6 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
       line-height: 1.7;
     }
-
 
     .dict-card {
       background: rgba(255, 255, 255, 0.00);
@@ -291,7 +425,7 @@
     /*typewriterh1*/
     .typewriter p {
       overflow: hidden; /* Ensures the content is not revealed until the animation */
-      border-right: .15em solid orange; /* The typwriter cursor */
+      border-right: .15em solid white; /* The typwriter cursor */
       white-space: nowrap; /* Keeps the content on a single line */
       margin: 0.1 auto; /* Gives that scrolling effect as the typing happens */
       letter-spacing: .10em; /* Adjust as needed */
@@ -306,25 +440,57 @@
   to { width: 100% }
 }
 
-/* The typewriter cursor effect */
-@keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: white; }
-}
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .nav {
+        padding: 1rem;
+      }
+      
+      .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .nav-logo {
+        font-size: 1rem;
+      }
+      
+      .nav-link {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+      
+      section.hero {
+        padding-top: 8rem;
+      }
+    }
   </style>
 </head>
 
 <body>
 
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">richtlinienkompetenz</a>
+      <div class="nav-links">
+        <a href="https://ai.richtlinienkompetenz.com/" target="_blank" class="nav-link">OpenWebUI</a>
+        <a href="https://mcsrvstat.us/server/mc.richtlinienkompetenz.com" class="nav-link">MC Server</a>
+        <div class="theme-toggle-container">
+          <label class="switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </nav>
+
   <div id="blob"></div>
   <div id="blur"></div>
-
-  <div class="theme-toggle-container">
-    <label class="switch">
-      <input type="checkbox" id="themeToggle">
-      <span class="slider"></span>
-    </label>
-  </div>
 
   <main>
     <section class="hero">
@@ -334,7 +500,6 @@
         </div>
       <div class="button-group">
         <a href="https://ai.richtlinienkompetenz.com/" target="_blank" class="button">OpenWebUI</a>
-        <a href="https://mcsrvstat.us/server/mc.richtlinienkompetenz.com" target="_blank" class="button">MC Server</a>
         <!--<button class="button" onclick="copyToClipboard()">Copy Link</button>-->
       </div>
     </section>
@@ -349,14 +514,13 @@
 
       <div class="dict-row">
         <span class="dict-label">Häufigkeit:</span>
-        <span class="dict-value">▭ ▬ ▬ ▬ ▬</span>
+        <span class="dict-value">▬ ▭ ▭ ▭ ▭</span>
       </div>
 
       <div class="dict-row">
         <span class="dict-label">Aussprache:</span>
         <span class="dict-value">
-          <strong>Betonung</strong><br />
-          Richtlinienkompetenz
+          <em><strong>Richt</strong></em>linienkompetenz
         </span>
       </div>
 
@@ -367,7 +531,41 @@
       <a href="https://www.duden.de/rechtschreibung/Richtlinienkompetenz">Quelle</a>
     </section>
 
-    <section class="server-status-section">
+    <section class="testimonials-section">
+      <h2><strong>Was andere sagen</strong></h2>
+      
+      <div class="testimonial" data-index="0">
+        <div class="testimonial-quote" data-text="Noch besser als Multivitaminiphone">
+          "Noch besser als Multivitaminiphone"
+        </div>
+        <div class="testimonial-author">— Jan Löschwald, Rund fett und glücklich</div>
+      </div>
+
+      <div class="testimonial" data-index="1">
+        <div class="testimonial-quote" data-text="Richtlinienkompetenz.com - ein Begriff, eine Vision, eine Zukunft.">
+          "Richtlinienkompetenz - ein Begriff, eine Vision, eine Zukunft."
+        </div>
+        <div class="testimonial-author">— Leander Hoffbach, Stehpinkler</div>
+      </div>
+
+      <div class="testimonial" data-index="2">
+        <div class="testimonial-quote" data-text="Gewöhnlich glaubt der Mensch, wenn er nur Worte hört,/ Es müsse sich dabei doch auch was denken lassen.">
+          "Gewöhnlich glaubt der Mensch, wenn er nur Worte hört,/ Es müsse sich dabei doch auch was denken lassen."
+        </div>
+        <div class="testimonial-author">— Lilia Baum, Mitstreiterin</div>
+      </div>
+
+      <div class="testimonial" data-index="3">
+        <div class="testimonial-quote" data-text="Dieses wort hat mein Leben verändert!">
+          "Dieses wort hat mein Leben verändert!"
+        </div>
+        <div class="testimonial-author">— Julius Caesar, Kaiser</div>
+      </div>
+    <p class="bg_p"><em>*Namen potentiell leicht abgeändert. Die Aussagen sind möglicherweise frei erfunden</em></p>
+    </section>
+
+    <!--
+    <section id="server-status" class="server-status-section">
       <h2><strong> MC Server Status</strong></h2>
       <div id="server-status-card" class="dict-card">
         <div class="dict-left">
@@ -386,6 +584,7 @@
         </div>
       </div>
     </section>
+    -->
   </main>
 
   <script>
@@ -428,6 +627,62 @@
         localStorage.setItem("theme", "dark");
       }
     });
+
+    // Testimonials animation
+    function startTestimonialAnimations() {
+      const testimonials = document.querySelectorAll('.testimonial');
+      
+      testimonials.forEach((testimonial, index) => {
+        setTimeout(() => {
+          testimonial.classList.add('animate');
+          
+          // Start typing animation after slide-in
+          setTimeout(() => {
+            const quoteEl = testimonial.querySelector('.testimonial-quote');
+            const text = quoteEl.getAttribute('data-text');
+            const steps = text.length;
+            const duration = Math.max(2, steps * 0.08); // Minimum 2s, ~80ms per character
+            
+            // Hide the static text and prepare for animation
+            quoteEl.textContent = '';
+            quoteEl.style.setProperty('--steps', steps);
+            quoteEl.style.setProperty('--duration', duration + 's');
+            quoteEl.classList.add('typing');
+            
+            // Type out the text character by character
+            let i = 0;
+            const typeInterval = setInterval(() => {
+              if (i < text.length) {
+                quoteEl.textContent += text.charAt(i);
+                i++;
+              } else {
+                clearInterval(typeInterval);
+                quoteEl.classList.add('typing-complete');
+              }
+            }, duration * 1000 / steps);
+            
+          }, 500); // Wait 500ms after slide-in
+          
+        }, index * 800); // Stagger each testimonial by 800ms
+      });
+    }
+
+    // Intersection Observer for testimonials
+    const testimonialObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+          startTestimonialAnimations();
+          testimonialObserver.disconnect(); // Only run once
+        }
+      });
+    }, { threshold: 0.2 });
+
+    // Observe the testimonials section
+    const testimonialsSection = document.querySelector('.testimonials-section');
+    if (testimonialsSection) {
+      testimonialObserver.observe(testimonialsSection);
+    }
+
     async function fetchServerStatus(address) {
       try {
         const res = await fetch(`https://api.mcsrvstat.us/3/${address}`);
