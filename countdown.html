@@ -1,0 +1,523 @@
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+							<style>
+								body {
+									background-color: white; /* Ensure the iframe has a white background */
+								}
+
+								
+							</style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        #countdown {
+            font-size: 15vw;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.1em;
+            font-variant-numeric: tabular-nums;
+            z-index: 1;
+        }
+
+        #settings-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+            z-index: 1000;
+        }
+
+        #settings-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        #settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        #settings-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .setting-group input[type="color"],
+        .setting-group input[type="time"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .color-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .times-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .time-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .time-input-wrapper input {
+            flex: 1;
+        }
+
+        .remove-time {
+            background: transparent;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-time {
+            background: #44aa44;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .save-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            z-index: 999;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown">00:00</div>
+    
+    <button id="settings-btn">⚙️</button>
+
+    <div id="settings-modal">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            
+            <div class="setting-group">
+                <label>Gradient</label>
+                <div class="color-inputs">
+                    <div>
+                        <input type="color" id="color1" value="#667eea">
+                    </div>
+                    <div>
+                        <input type="color" id="color2" value="#764ba2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Target Times</label>
+                <div id="times-list" class="times-list"></div>
+                <button class="add-time" id="add-time">+ Add Time</button>
+            </div>
+
+            <div class="setting-group">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="confetti-toggle" checked>
+                    <label for="confetti-toggle" style="margin: 0;">Enable Confetti</label>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="cancel-btn" id="cancel-btn">Cancel</button>
+                <button class="save-btn" id="save-btn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // Default settings
+        const defaultSettings = {
+            color1: '#667eea',
+            color2: '#764ba2',
+            times: ['07:35', '08:30', '09:25', '10:20', '11:20', '12:15', '13:10', '14:05', '15:00', '15:55', '16:50'],
+            confettiEnabled: true
+        };
+
+        let settings = JSON.parse(localStorage.getItem('countdownSettings')) || { ...defaultSettings };
+
+        // Elements
+        const countdownEl = document.getElementById('countdown');
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const color1Input = document.getElementById('color1');
+        const color2Input = document.getElementById('color2');
+        const timesListEl = document.getElementById('times-list');
+        const addTimeBtn = document.getElementById('add-time');
+        const confettiToggle = document.getElementById('confetti-toggle');
+        const saveBtn = document.getElementById('save-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+
+        //canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        function applyGradient() {
+            document.body.style.background = `linear-gradient(135deg, ${settings.color1} 0%, ${settings.color2} 100%)`;
+        }
+
+        // Confetti
+        let confetti = [];
+        let confettiActive = false;
+
+        class ConfettiPiece {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -10;
+                this.size = Math.random() * 8 + 4;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = Math.random() * 2 - 1;
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 - 5;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                
+                if (this.y > canvas.height) {
+                    return false;
+                }
+                return true;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function startConfetti() {
+            if (!settings.confettiEnabled) return;
+            confettiActive = true;
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    confetti.push(new ConfettiPiece());
+                }, i * 20);
+            }
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            confetti = confetti.filter(piece => {
+                piece.update();
+                piece.draw();
+                return piece.y <= canvas.height;
+            });
+
+            if (confetti.length > 0 || confettiActive) {
+                requestAnimationFrame(animateConfetti);
+            } else {
+                confettiActive = false;
+            }
+        }
+
+        // Countdown 
+        function getNextTargetTime() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            const sortedTimes = settings.times
+                .map(time => {
+                    const [hours, minutes] = time.split(':').map(Number);
+                    return hours * 60 + minutes;
+                })
+                .sort((a, b) => a - b);
+
+            for (let targetMinutes of sortedTimes) {
+                if (targetMinutes > currentTime) {
+                    const targetDate = new Date(now);
+                    targetDate.setHours(Math.floor(targetMinutes / 60));
+                    targetDate.setMinutes(targetMinutes % 60);
+                    targetDate.setSeconds(0);
+                    targetDate.setMilliseconds(0);
+                    return targetDate;
+                }
+            }
+
+            // If no time today, use first time tomorrow
+            const tomorrowDate = new Date(now);
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            tomorrowDate.setHours(Math.floor(sortedTimes[0] / 60));
+            tomorrowDate.setMinutes(sortedTimes[0] % 60);
+            tomorrowDate.setSeconds(0);
+            tomorrowDate.setMilliseconds(0);
+            return tomorrowDate;
+        }
+
+        let lastSecond = -1;
+        let hasTriggeredConfetti = false;
+
+        function updateCountdown() {
+            const now = new Date();
+            const target = getNextTargetTime();
+            const diff = target - now;
+
+            if (diff <= 0) {
+                countdownEl.textContent = '00:00';
+                if (!hasTriggeredConfetti) {
+                    startConfetti();
+                    animateConfetti();
+                    hasTriggeredConfetti = true;
+                }
+                setTimeout(() => {
+                    hasTriggeredConfetti = false;
+                    updateCountdown();
+                }, 1000);
+                return;
+            }
+
+            hasTriggeredConfetti = false;
+
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+
+            countdownEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            // Check if we just hit zero
+            if (seconds === 0 && minutes === 0 && lastSecond !== 0) {
+                startConfetti();
+                animateConfetti();
+            }
+            
+            lastSecond = seconds;
+        }
+
+        // Settings modal
+        function renderTimeInputs() {
+            timesListEl.innerHTML = '';
+            settings.times.forEach((time, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'time-input-wrapper';
+                
+                const input = document.createElement('input');
+                input.type = 'time';
+                input.value = time;
+                input.dataset.index = index;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-time';
+                removeBtn.textContent = '×';
+                removeBtn.onclick = () => {
+                    settings.times.splice(index, 1);
+                    renderTimeInputs();
+                };
+                
+                wrapper.appendChild(input);
+                if (settings.times.length > 1) {
+                    wrapper.appendChild(removeBtn);
+                }
+                timesListEl.appendChild(wrapper);
+            });
+        }
+
+        function openSettings() {
+            color1Input.value = settings.color1;
+            color2Input.value = settings.color2;
+            confettiToggle.checked = settings.confettiEnabled;
+            renderTimeInputs();
+            settingsModal.classList.add('active');
+        }
+
+        function closeSettings() {
+            settingsModal.classList.remove('active');
+        }
+
+        function saveSettings() {
+            settings.color1 = color1Input.value;
+            settings.color2 = color2Input.value;
+            settings.confettiEnabled = confettiToggle.checked;
+            
+            // Collect times from inputs
+            const timeInputs = timesListEl.querySelectorAll('input[type="time"]');
+            settings.times = Array.from(timeInputs)
+                .map(input => input.value)
+                .filter(time => time !== '');
+            
+            localStorage.setItem('countdownSettings', JSON.stringify(settings));
+            applyGradient();
+            closeSettings();
+        }
+
+        // listeners
+        settingsBtn.addEventListener('click', openSettings);
+        cancelBtn.addEventListener('click', closeSettings);
+        saveBtn.addEventListener('click', saveSettings);
+        
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                closeSettings();
+            }
+        });
+
+        addTimeBtn.addEventListener('click', () => {
+            settings.times.push('12:00');
+            renderTimeInputs();
+        });
+
+        // Init stuff
+        applyGradient();
+        updateCountdown();
+        setInterval(updateCountdown, 100);
+    </script>
+</body>
+</html>
+
+							<script>
+                            	
+							</script>
+                        </body>
+                        </html>
+                    
